@@ -30,15 +30,19 @@ for i in range(len(target[3])):
     try:
         t1 = datetime.datetime.now()
         print(i)
+        # transformacao catch22 
         c22_no_nan = Catch22(replace_nans=True)
         dataset = target[3][i]
         X, y = load_classification(name=dataset)  
         data_no_nan = c22_no_nan.fit_transform(X)
+        # transformacao do dataset transformado em meta features
         mfe = MFE(groups=["general", "statistical", "info-theory"])
         mfe.fit(data_no_nan,y)
         ft = mfe.extract()
         ft = [dataset, i, ft]
+        # armazena as informacoes da meta feature em um list
         meta_features.append(ft)
+        # registra o tempo consumido
         t2 = datetime.datetime.now()
         tempo = t2 - t1
         l = [dataset, str(tempo)]
@@ -48,6 +52,7 @@ for i in range(len(target[3])):
     except:
         erros.append(i)
 
+# salva as meta features e o tempo em diferentes formatos
 with open('Bases/Meta-Features_Catch22+MFE.pkl', 'wb') as f:
     pkl.dump(meta_features, f)
 df = pd.DataFrame(meta_features)
